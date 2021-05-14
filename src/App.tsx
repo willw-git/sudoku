@@ -1,25 +1,52 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
-function App() {
+type SubmitHandler = (e: React.SyntheticEvent) => void;
+
+function EntryForm({onSubmit } : {onSubmit : SubmitHandler}) {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <form onSubmit={onSubmit} className="will-style">
+      <div>
+        <div className="will-div">
+          <label htmlFor="total">Total: </label>
+          <input name="total" type="number" />
+        </div>
+        <div className="will-div">
+          <label htmlFor="squareCount">Count of Squares: </label>
+          <input name="squareCount" type="number" />
+        </div>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+  )
+
+}
+
+
+function App() {
+
+  const [total, setTotal] = React.useState(0);
+  const [squareCount, setSquareCount] = React.useState(0);
+
+  const handleSubmit = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    const target = e.target as typeof e.target & {
+      total: { value: number };
+      squareCount: { value: number };
+    };
+    setTotal(target.total.value);
+    setSquareCount(target.squareCount.value);
+  }
+  
+  React.useEffect(()=>{
+    if (total > 0 && squareCount > 0) {
+      alert(`You entered: ${total} and ${squareCount}`)
+    }
+  }, [total, squareCount]);
+  
+
+  return (
+    <EntryForm onSubmit={handleSubmit}></EntryForm>
   );
 }
 
