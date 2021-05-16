@@ -8,6 +8,7 @@ type SubmitHandler = (e: React.SyntheticEvent) => void;
 
 function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
   const [validNumbers, setValidNumbers] = React.useState(false);
+  const [used, setUsed] = React.useState<boolean[]>(new Array(10).fill(false));
 
   const totalRef = React.useRef<HTMLInputElement>(null);
   const squareCountRef = React.useRef<HTMLInputElement>(null);
@@ -17,6 +18,13 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
       (totalRef?.current?.valueAsNumber ?? 0) > 0 &&
       (squareCountRef?.current?.valueAsNumber ?? 0) > 0;
     setValidNumbers(v);
+  }
+
+  const handleCbChange = ( e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.checked);
+    let newUsed = [...used];
+    newUsed[e.target.valueAsNumber] = e.target.checked;
+    setUsed(newUsed);
   }
   return (
     <form onSubmit={onSubmit} className="will-style">
@@ -30,6 +38,21 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
           <input ref={squareCountRef} onChange={handleChange} name="squareCount" type="number" />
         </div>
       </div>
+      <div className="will-div-cb">
+        Used: 
+        {Array.from(new Array(9), (x, i) => i + 1).map((v : number) => (
+            <span key={v}>
+              <label style={{marginLeft:"15px"}} htmlFor={`cb${v}`}>{` ${v}`}</label>
+              <input type="checkbox" name={`cb${v}`} value={v} onChange={handleCbChange} />
+            </span>
+          )
+        )
+        
+        /* {Array<number>.from( map((v:number) => {
+
+        })} */}
+      </div>
+
       <button type="submit" disabled={!validNumbers}>Submit</button>
     </form>
   )
@@ -55,21 +78,23 @@ function ResultDisplay({results} : {results: TResult | null}) {
 }
 
 function App() {
-  const [total, setTotal] = React.useState(0);
-  const [squareCount, setSquareCount] = React.useState(0);
+  // const [total, setTotal] = React.useState(0);
+  // const [squareCount, setSquareCount] = React.useState(0);
   const [results, setResults] = React.useState<TResult | null>(null);
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     const target = e.target as typeof e.target & {
-      total: { value: number };
-      squareCount: { value: number };
+      total: { valueAsNumber: number };
+      squareCount: { valueAsNumber: number };
     };
-    setTotal(target.total.value);
-    setSquareCount(target.squareCount.value);
-    const r = getResults(total, squareCount);
+    // setTotal(target.total.valueAsNumber);
+    // setSquareCount(target.squareCount.valueAsNumber);
+    const r = getResults(target.total.valueAsNumber, target.squareCount.valueAsNumber);
     setResults(r);
   }
+
+
 
   return (
     <>
