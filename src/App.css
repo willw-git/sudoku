@@ -44,6 +44,8 @@
 
 .will-style button {
   margin-top: 10pt;
+  min-width: 65px;
+
 }
 
 .will-div {
@@ -69,4 +71,8 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+.will-div-button button {
+  margin-right: 15px;
 }
