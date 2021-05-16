@@ -42,6 +42,10 @@
   margin: 20px;
 }
 
+.will-style button {
+  margin-top: 10pt;
+}
+
 .will-div {
   clear: left;
 }
