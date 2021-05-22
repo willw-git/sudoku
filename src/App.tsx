@@ -5,9 +5,38 @@ import { TResult, SubmitResult, getResults } from './calcs';
 
 type SubmitHandler = (r: SubmitResult) => void;
 
+function UsedCheckBox({ label, isSelected, onCheckboxChange } :
+   {label: number, isSelected:boolean, onCheckboxChange: React.ChangeEventHandler<HTMLInputElement>}) {
+  return (
+    <label>
+      <input
+        style={{ marginLeft: "18px" }}
+        type="checkbox"
+        name={label.toString()}
+        checked={isSelected}
+        onChange={onCheckboxChange} />
+      {(label + 1).toString( )}
+    </label>
+  )
+}
+
 function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
+  // Array of constants 1..9
+  const OPTIONS = Array.from(new Array(9), (x, i) => i /*+ 1*/);
   const [validNumbers, setValidNumbers] = React.useState(false);
-  const [used, setUsed] = React.useState<boolean[]>(new Array(10).fill(false));
+  const [checkBoxes, setCheckBoxes] = React.useState(
+    OPTIONS.map(() => false));
+  
+  const createCheckBox = (option:number) => (
+    <UsedCheckBox
+      label={option}
+      isSelected={checkBoxes[option]}
+      onCheckboxChange={handleCbChange}
+      key={option}
+    />
+  );
+
+  const createCheckBoxes = () => OPTIONS.map(createCheckBox);
 
   const totalRef = React.useRef<HTMLInputElement>(null);
   const squareCountRef = React.useRef<HTMLInputElement>(null);
@@ -21,9 +50,10 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
 
   const handleCbChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.checked);
-    let newUsed = [...used];
-    newUsed[Number(e.target.value)] = e.target.checked;
-    setUsed(newUsed);
+    const { name } = e.target;
+    let newCheckBoxes = [...checkBoxes];
+    newCheckBoxes[+name] = !newCheckBoxes[+name];
+    setCheckBoxes(newCheckBoxes);
   }
 
   const onLocalSubmit = (e: React.SyntheticEvent) => {
@@ -36,15 +66,24 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
     onSubmit({
       total: target.total.valueAsNumber,
       squareCount: target.squareCount.valueAsNumber,
-      used: used
+      used: [false, ...checkBoxes]
     });
   }
+  
+  const onSelectAll = () => selectAllCheckBoxes(true);
+  const onSelectNone = () => selectAllCheckBoxes(false);
 
-  const onGroupClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    const target = e.target as typeof e.target & { name: string };
-    const checked = target.name === "allButton";
-    console.log(checked);
-  }
+  const selectAllCheckBoxes = (isSelected: boolean) =>
+    setCheckBoxes(OPTIONS.map(() => isSelected));
+
+  
+  
+
+  // const onGroupClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  //   const target = e.target as typeof e.target & { name: string };
+  //   const checked = target.name === "allButton";
+  //   console.log(checked);
+  // }
 
   return (
     <form onSubmit={onLocalSubmit} className="will-style">
@@ -60,16 +99,11 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
       </div>
       <div className="will-div-cb">
         Used:
-        {Array.from(new Array(9), (x, i) => i + 1).map((v: number) => (
-        <span key={v}>
-          <input style={{ marginLeft: "18px" }} type="checkbox" name={`cb${v}`} value={v} onChange={handleCbChange} />
-          <label htmlFor={`cb${v}`}>{` ${v}`}</label>
-        </span>
-      ))}
+        {createCheckBoxes()}
       </div>
       <div className="will-div-button">
-        <button type="button" onClick={onGroupClick} name="allButton">All</button>
-        <button type="button" onClick={onGroupClick} name="noneButton">None</button>
+        <button type="button" onClick={onSelectAll} name="allButton">All</button>
+        <button type="button" onClick={onSelectNone} name="noneButton">None</button>
       </div>
 
 
