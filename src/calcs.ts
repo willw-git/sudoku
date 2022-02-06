@@ -12,7 +12,8 @@ export function getResults(sr : SubmitResult): TResult {
   // return [];
   let fullResults: TResult = [];
 
-  const calcResult = (start: number, balance: number, count: number, partial: Array<number>) => {
+  // Recursive function
+  function calcResult(start: number, balance: number, count: number, partial: Array<number>): void {
     if (count === 1) {
       if (start <= balance && balance < 10 && !sr.used[balance]) {
         // Success! Save result1
@@ -21,9 +22,10 @@ export function getResults(sr : SubmitResult): TResult {
       }
     } else {
       for (let i = start; i <= Math.min(balance, 9); i++) {
-        if (sr.used[i]) continue;
+        if (sr.used[i])
+          continue;
         const newPartial = [...partial, i]; // partial.concat(i);
-        calcResult(i+1, balance - i, count - 1, newPartial);
+        calcResult(i + 1, balance - i, count - 1, newPartial);
       }
     }
   }

@@ -89,14 +89,6 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
     setCheckBoxes(OPTIONS.map(() => isSelected));
 
 
-
-
-  // const onGroupClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-  //   const target = e.target as typeof e.target & { name: string };
-  //   const checked = target.name === "allButton";
-  //   console.log(checked);
-  // }
-
   return (
     <form onSubmit={onLocalSubmit} className="will-style">
       <div>
