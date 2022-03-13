@@ -12,7 +12,7 @@ export function getResults(sr : SubmitResult): TResult {
   // return [];
   let fullResults: TResult = [];
 
-  // Recursive function
+  // Recursive function 
   function calcResult(start: number, balance: number, count: number, partial: Array<number>): void {
     if (count === 1) {
       if (start <= balance && balance < 10 && !sr.used[balance]) {

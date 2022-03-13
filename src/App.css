@@ -88,4 +88,5 @@ button.will-clear  {
 label.will-sliderlabel {
   color: cornflowerblue;
   min-width: 20px;
+  vertical-align: bottom;
 }
