@@ -3,6 +3,8 @@ import './App.css';
 
 import { TResult, SubmitResult, getResults } from './calcs';
 
+// npm start then it is on port 3000
+
 /* Ideas
    Have a line of Must Includes
 */
