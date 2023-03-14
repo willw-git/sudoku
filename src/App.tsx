@@ -3,6 +3,10 @@ import './App.css';
 
 import { TResult, SubmitResult, getResults } from './calcs';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import { Button, Form } from 'react-bootstrap';
+
 // npm start then it is on port 3000
 
 /* Ideas
@@ -11,18 +15,26 @@ import { TResult, SubmitResult, getResults } from './calcs';
 
 type SubmitHandler = (r: SubmitResult) => void;
 
-function UsedCheckBox({ label, isSelected, onCheckboxChange }:
-  { label: number, isSelected: boolean, onCheckboxChange: React.ChangeEventHandler<HTMLInputElement> }) {
+function UsedCheckBox({ labelNum, isSelected, onCheckboxChange }:
+  { labelNum: number, isSelected: boolean, onCheckboxChange: React.ChangeEventHandler<HTMLInputElement> }) {
   return (
-    <label style={{ marginLeft: "6px",marginRight: "6px" }}>
-      <input
-        type="checkbox"
-        name={label.toString()}
-        checked={isSelected}
-        onChange={onCheckboxChange} />
-      {(label + 1).toString()}
-    </label>
-  )
+    <Form.Check inline 
+      type="checkbox"
+      name={labelNum.toString()}
+      label={(labelNum + 1).toString()}
+      checked= {isSelected} 
+      onChange={onCheckboxChange} />  
+  ) 
+  // return (
+  //   <label style={{ marginLeft: "6px", marginRight: "6px" }}>
+  //     <input
+  //       type="checkbox"
+  //       name={label.toString()}
+  //       checked={isSelected}
+  //       onChange={onCheckboxChange} />
+  //     {(labelNum + 1).toString()}
+  //   </label>
+  // )
 }
 
 function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
@@ -34,7 +46,7 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
 
   const createCheckBox = (option: number) => (
     <UsedCheckBox
-      label={option}
+      labelNum={option}
       isSelected={checkBoxes[option]}
       onCheckboxChange={handleCbChange}
       key={option}
@@ -92,32 +104,35 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
 
 
   return (
-    <form onSubmit={onLocalSubmit}>
-      <div>
+    <>
+      <h1>Killer Killer Sudoku</h1>
+      <Form onSubmit={onLocalSubmit}>
         <div>
-          <label htmlFor="total">Total: </label>
-          <input ref={totalRef} onChange={handleChange} name="total" type="number" />
-          <button className="will-clear" type="button" onClick={onClearTotalButton} name="clearTotalButton">X</button>
+          <Form.Group>
+            <Form.Label htmlFor="total">Total: </Form.Label>
+            <Form.Control ref={totalRef} onChange={handleChange} name="total" type="number" />
+            <Button type="button" onClick={onClearTotalButton} name="clearTotalButton">X</Button>
+          </Form.Group>
+          <Form.Group>
+            <Form.Label htmlFor="squareCount">Count of Squares: </Form.Label>
+            <Form.Label ref={squareCountLabelRef} className="will-sliderlabel" > </Form.Label>
+            <Form.Control ref={squareCountRef} onChange={handleChange} name="squareCount" type="range" min="2" max="8" style={{ minWidth: '200px' }} />
+            </Form.Group>
         </div>
-        <div>
-          <label htmlFor="squareCount">Count of Squares: </label>
-          <label ref={squareCountLabelRef} className="will-sliderlabel" > </label>
-          <input ref={squareCountRef} onChange={handleChange} name="squareCount" type="range" min="2" max="8" style={{ minWidth: '200px' }} />
-        </div>
-      </div>
-      <div>
-        <span>
-          Without:
-        {createCheckBoxes()}
-        </span>
-        <span >
-          <button type="button" onClick={onSelectAll} name="allButton">A</button>
-          <button type="button" onClick={onSelectNone} name="noneButton">N</button>
-        </span>
-      </div>
+        <Form.Group>
+          <span>
+            <Form.Label>Without: </Form.Label>
+            {createCheckBoxes()}
+          </span>
+          <span >
+            <Button type="button" onClick={onSelectAll} name="allButton">A</Button>
+            <Button type="button" onClick={onSelectNone} name="noneButton">N</Button>
+          </span>
+        </Form.Group>
 
-      <button type="submit" disabled={!validNumbers}>Submit</button>
-    </form>
+        <Button type="submit" disabled={!validNumbers}>Submit</Button>
+      </Form>
+    </>
   )
 
 } /* EntryForm */
@@ -149,10 +164,10 @@ function App() {
   }
 
   return (
-    <>
+    <div className='container'>
       <EntryForm onSubmit={handleSubmit}></EntryForm>
       <ResultDisplay results={results} />
-    </>
+    </div>
   );
 }
 
