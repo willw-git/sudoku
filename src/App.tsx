@@ -5,7 +5,7 @@ import { TResult, SubmitResult, getResults } from './calcs';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { Button, Form } from 'react-bootstrap';
+import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 
 // npm start then it is on port 3000
 
@@ -18,13 +18,13 @@ type SubmitHandler = (r: SubmitResult) => void;
 function UsedCheckBox({ labelNum, isSelected, onCheckboxChange }:
   { labelNum: number, isSelected: boolean, onCheckboxChange: React.ChangeEventHandler<HTMLInputElement> }) {
   return (
-    <Form.Check inline 
+    <Form.Check inline
       type="checkbox"
       name={labelNum.toString()}
       label={(labelNum + 1).toString()}
-      checked= {isSelected} 
-      onChange={onCheckboxChange} />  
-  ) 
+      checked={isSelected}
+      onChange={onCheckboxChange} />
+  )
   // return (
   //   <label style={{ marginLeft: "6px", marginRight: "6px" }}>
   //     <input
@@ -57,7 +57,7 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
 
   const totalRef = React.useRef<HTMLInputElement>(null);
   const squareCountRef = React.useRef<HTMLInputElement>(null);
-  const squareCountLabelRef = React.useRef<HTMLLabelElement>(null);
+  const squareCountLabelRef = React.useRef<HTMLInputElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v =
@@ -65,7 +65,7 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
       (squareCountRef?.current?.valueAsNumber ?? 0) > 0;
     setValidNumbers(v);
     if (e.currentTarget === squareCountRef.current && squareCountLabelRef.current) {
-      squareCountLabelRef.current.innerText = squareCountRef.current.value;
+      squareCountLabelRef.current.value = squareCountRef.current.value;
     }
   }
 
@@ -105,32 +105,47 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
 
   return (
     <>
-      <h1>Killer Killer Sudoku</h1>
       <Form onSubmit={onLocalSubmit}>
         <div>
-          <Form.Group>
-            <Form.Label htmlFor="total">Total: </Form.Label>
-            <Form.Control ref={totalRef} onChange={handleChange} name="total" type="number" />
-            <Button type="button" onClick={onClearTotalButton} name="clearTotalButton">X</Button>
+          <Form.Group as={Row} className="mb-2">
+            <Col md={2}>
+              <Form.Label htmlFor="total">Total: </Form.Label>
+            </Col>
+            <Col md={4}>
+              <InputGroup className='mb-2'>
+                <Form.Control ref={totalRef} onChange={handleChange} name="total" type="number" />
+                <Button type="button" onClick={onClearTotalButton} variant="outline-danger" name="clearTotalButton"><i className="bi bi-x" /></Button>
+              </InputGroup>
+            </Col>
+            <Col md={2} xs={6}>
+              <Form.Label htmlFor="squareCount">Count of Squares: </Form.Label>
+            </Col>
+            <Col md={1} xs={6}>
+              <Form.Control  readOnly ref={squareCountLabelRef} defaultValue="" />
+            </Col>
+            <Col md={3}>
+              <Form.Range ref={squareCountRef} onChange={handleChange} name="squareCount" min="2" max="8" style={{ minWidth: '200px' }} />
+            </Col>
           </Form.Group>
-          <Form.Group>
-            <Form.Label htmlFor="squareCount">Count of Squares: </Form.Label>
-            <Form.Label ref={squareCountLabelRef} className="will-sliderlabel" > </Form.Label>
-            <Form.Control ref={squareCountRef} onChange={handleChange} name="squareCount" type="range" min="2" max="8" style={{ minWidth: '200px' }} />
-            </Form.Group>
         </div>
-        <Form.Group>
-          <span>
-            <Form.Label>Without: </Form.Label>
+        <Form.Group as={Row}>
+          <Col md={2} xs={4}>
+            <Form.Label>Without </Form.Label>
+          </Col>
+          <Col md={8} xs={8}>
             {createCheckBoxes()}
-          </span>
-          <span >
-            <Button type="button" onClick={onSelectAll} name="allButton">A</Button>
-            <Button type="button" onClick={onSelectNone} name="noneButton">N</Button>
-          </span>
+          </Col>
+          <Col md={2} xs={{span:4, offset:8}} >
+            <Button type="button" variant="secondary" onClick={onSelectAll} name="allButton" size="sm" style={{marginRight:"4px"}}>All</Button>
+            <Button type="button" variant="secondary" onClick={onSelectNone} name="noneButton" size="sm" >None</Button>
+          </Col>
         </Form.Group>
 
-        <Button type="submit" disabled={!validNumbers}>Submit</Button>
+        <Form.Group as={Row} className="mb-2">
+          <Col md={1}>
+          <Button type="submit" disabled={!validNumbers}>Submit</Button>
+          </Col>
+        </Form.Group>
       </Form>
     </>
   )
@@ -165,6 +180,7 @@ function App() {
 
   return (
     <div className='container'>
+      <h4 className='mb-4 mt-2'>Killer Killer Sudoku</h4>
       <EntryForm onSubmit={handleSubmit}></EntryForm>
       <ResultDisplay results={results} />
     </div>
