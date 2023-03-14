@@ -92,25 +92,25 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
 
 
   return (
-    <form onSubmit={onLocalSubmit} className="will-style">
+    <form onSubmit={onLocalSubmit}>
       <div>
-        <div className="will-div">
+        <div>
           <label htmlFor="total">Total: </label>
           <input ref={totalRef} onChange={handleChange} name="total" type="number" />
           <button className="will-clear" type="button" onClick={onClearTotalButton} name="clearTotalButton">X</button>
         </div>
-        <div className="will-div">
+        <div>
           <label htmlFor="squareCount">Count of Squares: </label>
           <label ref={squareCountLabelRef} className="will-sliderlabel" > </label>
           <input ref={squareCountRef} onChange={handleChange} name="squareCount" type="range" min="2" max="8" style={{ minWidth: '200px' }} />
         </div>
       </div>
       <div>
-        <span className="will-div-cb">
+        <span>
           Without:
         {createCheckBoxes()}
         </span>
-        <span className="will-div-button">
+        <span >
           <button type="button" onClick={onSelectAll} name="allButton">A</button>
           <button type="button" onClick={onSelectNone} name="noneButton">N</button>
         </span>
@@ -124,7 +124,7 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
 
 function ResultDisplay({ results }: { results: TResult | null }) {
   return (
-    <div className="will-style" hidden={results === null} >
+    <div hidden={results === null} >
       <p>Result:</p>
       {results?.length === 0 ?
         (
