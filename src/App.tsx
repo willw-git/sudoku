@@ -5,7 +5,7 @@ import { TResult, SubmitResult, getResults } from './calcs';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
+import { Alert, Button, Col, Form, InputGroup, Modal, Row } from 'react-bootstrap';
 
 // npm start then it is on port 3000
 
@@ -121,7 +121,7 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
               <Form.Label htmlFor="squareCount">Count of Squares: </Form.Label>
             </Col>
             <Col md={1} xs={6}>
-              <Form.Control  readOnly ref={squareCountLabelRef} defaultValue="" />
+              <Form.Control readOnly ref={squareCountLabelRef} defaultValue="" />
             </Col>
             <Col md={3}>
               <Form.Range ref={squareCountRef} onChange={handleChange} name="squareCount" min="2" max="8" style={{ minWidth: '200px' }} />
@@ -135,15 +135,15 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
           <Col md={8} xs={8}>
             {createCheckBoxes()}
           </Col>
-          <Col md={2} xs={{span:4, offset:8}} >
-            <Button type="button" variant="secondary" onClick={onSelectAll} name="allButton" size="sm" style={{marginRight:"4px"}}>All</Button>
+          <Col md={2} xs={{ span: 4, offset: 8 }} >
+            <Button type="button" variant="secondary" onClick={onSelectAll} name="allButton" size="sm" style={{ marginRight: "4px" }}>All</Button>
             <Button type="button" variant="secondary" onClick={onSelectNone} name="noneButton" size="sm" >None</Button>
           </Col>
         </Form.Group>
 
         <Form.Group as={Row} className="mb-2">
           <Col md={1}>
-          <Button type="submit" disabled={!validNumbers}>Submit</Button>
+            <Button type="submit" disabled={!validNumbers}>Submit</Button>
           </Col>
         </Form.Group>
       </Form>
@@ -152,37 +152,50 @@ function EntryForm({ onSubmit }: { onSubmit: SubmitHandler }) {
 
 } /* EntryForm */
 
-function ResultDisplay({ results }: { results: TResult | null }) {
-  return (
-    <div hidden={results === null} >
-      <p>Result:</p>
-      {results?.length === 0 ?
-        (
-          <p style={{ color: 'red' }} >No Valid Results</p>
-        ) : (
-          <ul>
-            {results?.map((item, index) => (
-              <li key={index}>{item.join(", ")}</li>
-            ))}
-          </ul>
-        )}
-    </div>
-  )
+function ResultDisplay({ results, show, onClose }: { results: TResult | null, show: boolean, onClose: () => void }) {
+  
+  return (<>
+    {results?.length &&
+    <Modal show={show} onHide={onClose}>
+      <Modal.Header closeButton>
+          <Modal.Title>Valid combinations</Modal.Title>
+        </Modal.Header>
+      <Modal.Body>
+        <ul>
+          {results?.map((item, index) => (
+            <li key={index}>{item.join(", ")}</li>
+          ))}
+        </ul>
+      </Modal.Body>
+      </Modal> }
+  </>)
 }
+
+
 
 function App() {
   const [results, setResults] = React.useState<TResult | null>(null);
+  const [showAlert, setShowAlert] = React.useState(false);
+  const [showResults, setShowResults] = React.useState(false);
 
   const handleSubmit = (sr: SubmitResult) => {
     const r = getResults(sr);
     setResults(r);
+    setShowAlert(r?.length === 0);
+    setShowResults(r?.length > 0);
   }
 
   return (
     <div className='container'>
       <h4 className='mb-4 mt-2'>Killer Killer Sudoku</h4>
+      {showAlert &&
+        <Alert variant='danger' onClose={() => { setShowAlert(false); }} dismissible>
+          No Valid Results!
+        </Alert>
+      }
       <EntryForm onSubmit={handleSubmit}></EntryForm>
-      <ResultDisplay results={results} />
+      {showResults && 
+        <ResultDisplay results={results} show={showResults} onClose={()=>{setShowResults(false)}} />}
     </div>
   );
 }
